@@ -2,51 +2,45 @@
 <head>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
  <script src="lib/modernizr-2.0.6.js" type="text/javascript"></script>
+ <script src="lib/jqote2.js" type="text/javascript"></script>
+
+ <script type="text/x-jqote-template" id="question">
+     <![CDATA[
+       <label for="<%=this.key%>"><%=this.text%></label>
+       <select class="question" id="<%=this.key%>">
+       <option value="">-- Select an answer --</option>
+       <option value="1">Yes</option>
+       <option value="0">No</option>
+       </select><br/>
+     ]]>
+ </script>
+
+
 </head>
 <body>
-<form method="POST">
-<label for="Social">Do you need to send socials to your users or customers?</label>
-<select class="question" id="Social">
-<option value="">-- Select an answer --</option>
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-
-<label for="Events">Do you need to use events in your application?</label>
-<select class="question" id="Events">
-<option value="">-- Select an answer --</option>
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-</form>
-
-<label for="Maps">Do you need to use maps in your application?</label>
-<select class="question" id="Maps">
-<option value="">-- Select an answer --</option>
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-</form>
-
+<div id="questions"></div>
 
 <div id="apis"></div>
 
 <script>
 $(document).ready(function() {
   var corpus;
+  var questions;
   jQuery.getJSON('data/corpus.json', function(data){
     corpus = data;
-    console.log(data);
-    
     renderApis(corpus);
+  });
+
+  jQuery.getJSON('data/questions.json', function(data){
+    questions = data;
+    renderQuestions(questions);
   });
   
   $('.question').each(function() {
-    console.log($(this).attr('id') + ": " + localStorage['apiDateUser.' + $(this).attr('id')]);
     $(this).val( localStorage['apiDateUser.' + $(this).attr('id')]);
   });
   
-  $('.question').change(function() {
+  $('.question').live('change', function() {
     localStorage['apiDateUser.' + $(this).attr('id')] = $(this).val();
     renderApis(corpus);
   });
@@ -54,23 +48,33 @@ $(document).ready(function() {
   
 });
 
+function renderQuestions(questionList) {
+  $.each(questionList, function(key, text) {
+    $('#questions').append($('#question').jqote({key: key, text: text}));
+  });
+  
+}
+
 function renderApis(apilist) {
-  $('#apis').html('');
-  $('#apis').append('<ul>');
   var attributelist = new Object;
   var apirating = new Object;
+  var retvals = new Object;
+
+  // determine the global sutability rating for each api
   $.each(apilist, function(key, val) {
     var rating = checkData(key, val, attributelist);
     apirating[key] = rating;
   });
   
-  var retvals = new Object;
-  
   $.each(attributelist, function(attribute, apis) {
+
+    // for each attribute, sort the api list by their global suitability
     apis = apis.sort(function(a,b) {
       return apirating[b] - apirating[a];
     });
-
+    
+    // filter down to only the top-ranked apis for each attribute
+    // and de-duplicate
     var maxval = -1;
     $.each(apis, function(index, api) {
       if(-1 == maxval) {
@@ -82,33 +86,29 @@ function renderApis(apilist) {
     });
   });
   
-  
+  $('#apis').html('');
+  $('#apis').append('<ul>');  
   $.each(retvals, function(api, rating) {
     $('#apis').append('<li>' + api + ' - ' + rating + '</li>');
   });
-  
   $('#apis').append('</ul>');
 }
 
-
-// hash of API -> score
-// each question adds to score
-// create list of apis that are > 0 for each given question
-// sort by the global rating
-
+// sloppily rates the different api matchups by category
 function checkData(apiname, api, attributelist) {
   var rating = 0;
   $.each(api, function(attribute, val) {
+    
+    // retrieve the user's response to this question
     var userAttribute = (localStorage['apiDateUser.' + attribute])
-    if((userAttribute) && (userAttribute == val)) {
+    if(userAttribute && (userAttribute == val)) {
       rating += 1;
 
+      // append to list of apis for this attribute
       if(!attributelist[attribute]) {
         attributelist[attribute] = new Array();
       }
       attributelist[attribute].push(apiname);
-
-      // append to list of apis for this attribute
     }
   });
   return rating;
