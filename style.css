@@ -48,7 +48,6 @@ h1 a:hover { color: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.4); padding-b
 h2 { font-size: 50px; color: #ff5400; height: 105px; margin-bottom: 10px; }
 h2 span.sub { font-size: 48px; float: left; color: #4b4b4b; }
 
-
 a { color: #7ac000; text-decoration: none; border-bottom: 1px solid #7ac000; padding-bottom: 2px; }
 a:hover { color: #ff5400; text-decoration: none; border-bottom: 1px solid #ff5400; padding-bottom: 2px; }
 a:active { color: #ff5400; text-decoration: none; border-bottom: 1px solid #ff5400; padding-bottom: 2px; position: relative; top: 1px; }
@@ -59,7 +58,10 @@ strong { font-family: KeffeesatzBold, Arial; }
 header { padding: 5px 0; height: 100%; width:20%; background-color: #000; margin-bottom: 25px; -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); -moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); position: fixed; z-index: 10; float: left; }
 #headercontainer, #contentcontainer { margin: 0 auto; position: relative; }
 #contentcontainer { padding-top: 0px; float:right; margin-left:20px; width:78%; }
-#questions { height:75%; }
+#questions { 
+  height:75%; 
+  padding-left: 20px;
+}
 #questions p { padding: 0; margin: 0; font-weight:bold; color:#FFF;  }
 #question a {margin-left: 20px;}
 

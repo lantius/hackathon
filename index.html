@@ -15,9 +15,11 @@
       
   <script type="text/x-jqote-template" id="question">
       <![CDATA[
+        <div id="question_<%=this.key%>" class="questiondiv">
         <p><%=this.text%></p>
         <a class="answer" id="<%=this.key%>_1" href="#yes">Yes</a>&nbsp;
         <a class="answer" id="<%=this.key%>_0" href="#no">No</a>&nbsp;
+        </div>
       ]]>
   </script>
     <!--[if IE]>
@@ -33,8 +35,7 @@
 <body>
   <header> <!-- HTML5 header tag -->
     <div id="headercontainer">
-      <h1><a class="introlink anchorLink" href="#intro">API Cupid</a></h1>
-      
+      <h1><img src="images/logo.png" width="40%" /></h1>      
       <div>
       <br /><br /><br />
       <input type="text" name="keyword" value="" placeholder="Keyword Search" />
@@ -42,17 +43,6 @@
     
       <div id="questions"></div>
       </div>
-	
-  		<div id="categories">
-      <p>API By Category:</p>
-  			<ul>
-	    
-  				<li><a class="contactlink anchorLink" href="#contact">Event/Calendar Functionality</a></li>
-  				<li><a class="aboutlink anchorLink" href="#about">Financial Requirements</a></li>
-  				<li><a class="geolocationlink anchorLink" href="#geolocation">Geolocation</a></li><br />
-  				<li><a class="portfoliolink anchorLink" href="#portfolio">Mobile/Table Ability</a></li>
-  			</ul>				
-  		</div>
 	
   	</div>
 
@@ -150,6 +140,16 @@
 	</script>
 	
   <script>
+  function showQuestion(field) {
+    $(field).fadeIn("slow");
+  }
+ 
+  function hideQuestions() {
+    $('.questiondiv').hide();
+  }
+  </script>
+	
+  <script>
   $(document).ready(function() {
     var corpus;
     var questions;
@@ -161,6 +161,9 @@
     jQuery.getJSON('data/questions.json', function(data){
       questions = data;
       renderQuestions(questions);
+
+      hideQuestions();
+      showQuestion('#question_Maps');
     });
 
     $('.question').each(function() {
