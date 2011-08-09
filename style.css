@@ -63,7 +63,7 @@ header { padding: 5px 0; height: 100%; width:20%; background-color: #000; margin
   padding-left: 20px;
 }
 #questions p { padding: 0; margin: 0; font-weight:bold; color:#FFF;  }
-#question a {margin-left: 20px;}
+#question a {margin-left: 20px; }
 
 #categories { margin-top:200px; }
 #categories { width: auto; float: left; }

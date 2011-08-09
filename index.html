@@ -162,8 +162,8 @@
       questions = data;
       renderQuestions(questions);
 
-      hideQuestions();
-      showQuestion('#question_Maps');
+      // hideQuestions();
+      // showQuestion('#question_Maps');
     });
 
     $('.question').each(function() {
@@ -172,7 +172,9 @@
 
     $('.answer').live('click', function() {
       var answer = $(this).attr('id').split('_');
-      localStorage['apiDateUser.' + answer[0]] = answer[1];
+      $('#question_' + answer[0]).hide();
+      var attribute = answer[0].replace('-', ' ')
+      localStorage['apiDateUser.' + attribute] = answer[1];
       renderApis(corpus);
     });
 
@@ -181,6 +183,7 @@
   
   function renderQuestions(questionList) {
     $.each(questionList, function(key, text) {
+      key = key.replace(' ', '-');
       $('#questions').append($('#question').jqote({key: key, text: text}));
     });
   }
@@ -219,7 +222,7 @@
     $('#apis').html('');
     $('#apis').append('<ul class="work" id="api_ul">');
     $.each(retvals, function(api, rating) {
-      $('#api_ul').append('<li><div><a href="http://inspectelement.com"><img src="images/inspectelementSmall.jpg" alt="Inspect Element preview" /></a><br>' + api + ' - ' + rating + '</div></li>');
+      $('#api_ul').append('<li><div><img src="icons/' + api + '.png" alt="' + api + '" /></a><br>' + api + ' - ' + rating + '</div></li>');
     });
     $('#apis').append('</ul>');
   }
