@@ -5,20 +5,29 @@
 </head>
 <body>
 <form method="POST">
-<label for="emails">Do you need to send socials to your users or customers?</label>
+<label for="Social">Do you need to send socials to your users or customers?</label>
 <select class="question" id="Social">
 <option value="">-- Select an answer --</option>
 <option value="1">Yes</option>
 <option value="0">No</option>
 </select>
 
-<label for="maps">Do you need to use maps in your application?</label>
+<label for="Events">Do you need to use events in your application?</label>
+<select class="question" id="Events">
+<option value="">-- Select an answer --</option>
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+</form>
+
+<label for="Maps">Do you need to use maps in your application?</label>
 <select class="question" id="Maps">
 <option value="">-- Select an answer --</option>
 <option value="1">Yes</option>
 <option value="0">No</option>
 </select>
 </form>
+
 
 <div id="apis"></div>
 
@@ -45,14 +54,39 @@ $(document).ready(function() {
   
 });
 
-function renderApis(corpus) {
+function renderApis(apilist) {
   $('#apis').html('');
   $('#apis').append('<ul>');
-  $.each(corpus, function(key, val) {
-    if(checkData(val)) {
-      $('#apis').append('<li>' + key + '</li>');
-    }
+  var attributelist = new Object;
+  var apirating = new Object;
+  $.each(apilist, function(key, val) {
+    var rating = checkData(key, val, attributelist);
+    apirating[key] = rating;
   });
+  
+  var retvals = new Object;
+  
+  $.each(attributelist, function(attribute, apis) {
+    apis = apis.sort(function(a,b) {
+      return apirating[b] - apirating[a];
+    });
+
+    var maxval = -1;
+    $.each(apis, function(index, api) {
+      if(-1 == maxval) {
+        maxval = apirating[api];
+      }
+      if(maxval == apirating[api]) {
+        retvals[api] = apirating[api];
+      }
+    });
+  });
+  
+  
+  $.each(retvals, function(api, rating) {
+    $('#apis').append('<li>' + api + ' - ' + rating + '</li>');
+  });
+  
   $('#apis').append('</ul>');
 }
 
@@ -62,16 +96,22 @@ function renderApis(corpus) {
 // create list of apis that are > 0 for each given question
 // sort by the global rating
 
-function checkData(api) {
+function checkData(apiname, api, attributelist) {
   var rating = 0;
   $.each(api, function(attribute, val) {
     var userAttribute = (localStorage['apiDateUser.' + attribute])
     if((userAttribute) && (userAttribute == val)) {
       rating += 1;
+
+      if(!attributelist[attribute]) {
+        attributelist[attribute] = new Array();
+      }
+      attributelist[attribute].push(apiname);
+
+      // append to list of apis for this attribute
     }
   });
-  console.log(rating);
-  return rating > 0;
+  return rating;
 }
 
 if (Modernizr.localstorage) {
