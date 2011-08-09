@@ -214,9 +214,9 @@
     });
 
     $('#apis').html('');
-    $('#apis').append('<ul class="work">');  
+    $('#apis').append('<ul class="work" id="api_ul">');
     $.each(retvals, function(api, rating) {
-      $('#apis').append('<li>	<a href="http://inspectelement.com"><img src="images/inspectelementSmall.jpg" alt="Inspect Element preview" /></a>' + api + ' - ' + rating + '</li>');
+      $('#api_ul').append('<li><div><a href="http://inspectelement.com"><img src="images/inspectelementSmall.jpg" alt="Inspect Element preview" /></a><br>' + api + ' - ' + rating + '</div></li>');
     });
     $('#apis').append('</ul>');
   }
