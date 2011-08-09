@@ -1,0 +1,87 @@
+<html>
+<head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+ <script src="lib/modernizr-2.0.6.js" type="text/javascript"></script>
+</head>
+<body>
+<form method="POST">
+<label for="emails">Do you need to send socials to your users or customers?</label>
+<select class="question" id="Social">
+<option value="">-- Select an answer --</option>
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+
+<label for="maps">Do you need to use maps in your application?</label>
+<select class="question" id="Maps">
+<option value="">-- Select an answer --</option>
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+</form>
+
+<div id="apis"></div>
+
+<script>
+$(document).ready(function() {
+  var corpus;
+  jQuery.getJSON('data/corpus.json', function(data){
+    corpus = data;
+    console.log(data);
+    
+    renderApis(corpus);
+  });
+  
+  $('.question').each(function() {
+    console.log($(this).attr('id') + ": " + localStorage['apiDateUser.' + $(this).attr('id')]);
+    $(this).val( localStorage['apiDateUser.' + $(this).attr('id')]);
+  });
+  
+  $('.question').change(function() {
+    localStorage['apiDateUser.' + $(this).attr('id')] = $(this).val();
+    renderApis(corpus);
+  });
+  
+  
+});
+
+function renderApis(corpus) {
+  $('#apis').html('');
+  $('#apis').append('<ul>');
+  $.each(corpus, function(key, val) {
+    if(checkData(val)) {
+      $('#apis').append('<li>' + key + '</li>');
+    }
+  });
+  $('#apis').append('</ul>');
+}
+
+
+// hash of API -> score
+// each question adds to score
+// create list of apis that are > 0 for each given question
+// sort by the global rating
+
+function checkData(api) {
+  var rating = 0;
+  $.each(api, function(attribute, val) {
+    var userAttribute = (localStorage['apiDateUser.' + attribute])
+    if((userAttribute) && (userAttribute == val)) {
+      rating += 1;
+    }
+  });
+  console.log(rating);
+  return rating > 0;
+}
+
+if (Modernizr.localstorage) {
+  // window.localStorage is available!
+} else {
+  console.log("window.localStorage isn't available!")
+  // no native support for HTML5 storage :(
+  // maybe try dojox.storage or a third-party solution
+}
+
+</script>
+</body>
+</html>
